@@ -6,12 +6,15 @@ import dev.mukesh.AssignmentBotmakers.entity.User;
 import dev.mukesh.AssignmentBotmakers.mapper.AuthMapper;
 import dev.mukesh.AssignmentBotmakers.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
+    //service
+    public final PasswordEncoder passwordEncoder;
 
     // repo
     public final UserRepo userRepo;
@@ -23,7 +26,7 @@ public class UserService {
 
         User user = authMapper.toUser(request);
 
-        user.setPassword(request.password());
+        user.setPassword(passwordEncoder.encode(request.password()));
 
         userRepo.save(user);
 
