@@ -1,22 +1,41 @@
-import { useEffect, useState } from "react"
 import { backendStatusRequest } from "../api/userApi";
+import { useQuery } from "@tanstack/react-query";
 
 const Home = () => {
 
-  const [data, setData] = useState<any | null>(null);
 
   const fetchData = async() => {
     try { 
       const res = await backendStatusRequest();
-      setData(res);
+      return res;
     }catch (error) {
       console.error("error fetching data:", error);
     }
   }
 
-  useEffect(() => {
-    fetchData();
-  }, [])
+  const {data, isLoading, error} = useQuery({
+    queryKey: ['backendStatus'],
+    queryFn: fetchData,
+  })
+
+  if(isLoading) {
+    return (
+      <div className="bg-gray-800 text-white h-lvh w-lvw flex flex-col gap-8 items-center justify-center">
+        <h1 className="text-4xl font-bold">Welcome to the Home Page</h1>
+        <p className="mt-4 text-lg">Loading backend status...</p>
+      </div>  
+    )
+  }
+
+  if(error) {
+    return (
+      <div className="bg-gray-800 text-white h-lvh w-lvw flex flex-col gap-8 items-center justify-center">
+        <h1 className="text-4xl font-bold">Welcome to the Home Page</h1>
+        <p className="mt-4 text-lg">Error loading backend status.</p>
+      </div>  
+    )
+  }
+
 
   return (
     <div className="bg-gray-800 text-white h-lvh w-lvw flex flex-col gap-8 items-center justify-center">

@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { registerUser } from "../api/authApi";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 type formData = {
   name: string;
@@ -14,6 +15,7 @@ const Register = () => {
 
   const navigate = useNavigate();
   
+  const [error , setError] = useState<string | null>(null);
 
   const { register, handleSubmit, formState: { errors, isSubmitting } } = 
     useForm<formData>({
@@ -31,6 +33,7 @@ const Register = () => {
         navigate("/dashboard");
     }catch(err){
       console.error("Registration failed", err);
+      setError("Registration failed. Please try again.");
     }
   }
 
@@ -90,6 +93,8 @@ const Register = () => {
             </button>
 
             <a href="/login" className="text-blue-500 hover:text-blue-700">Login</a>
+
+            {error && <p className="text-red-500">{error}</p>}
 
           </form>
         </div>

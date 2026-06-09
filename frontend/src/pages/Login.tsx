@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { loginUser } from "../api/authApi";
 import { useNavigate} from "react-router-dom";
+import { useState } from "react";
 
 type formData = {
   email: string;
@@ -11,6 +12,7 @@ type formData = {
 const Login = () => {
 
   const navigate = useNavigate();
+  const [error, setError] = useState<string | null>(null);
 
   const { register, handleSubmit, formState: { isSubmitting } } = 
     useForm<formData>();
@@ -24,6 +26,7 @@ const Login = () => {
         navigate("/dashboard");
     }catch(err){
       console.error("Login failed", err);
+      setError("Invalid email or password");
     }
   }
 
@@ -52,7 +55,7 @@ const Login = () => {
             <button type="submit" disabled={isSubmitting} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
               {isSubmitting ? "Logging in..." : "Login"}
             </button>
-            
+            {error && <p className="text-red-500">{error}</p>}
             <a href="/register" className="text-blue-500 hover:text-blue-700">Sign up</a>
 
           </form>

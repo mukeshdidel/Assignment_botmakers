@@ -1,51 +1,68 @@
-import { useEffect, useState } from "react";
 import { adminRequest, userRequest } from "../api/userApi";
+import { useQuery } from "@tanstack/react-query";
+import UserCard from "../components/UserCard";
+import AdminCard from "../components/AdminCard";
 
 const Dashboard = () => {
 
   const role: "ADMIN" | "USER" = localStorage.getItem('role') as "ADMIN" | "USER";
-  
-  const [data, setData] = useState<any>(null);
 
   async function fetchData() {
     try {
       if(role === "ADMIN") {
         const res = await adminRequest();
-        setData(res);
+        return res;
       }
       else if (role === "USER") {
         const res = await userRequest();
-        setData(res);
+        return res;
       }
     }catch (error) {
       console.error("error fetching dashboard data:", error);
     }
   }
 
-  useEffect(() => {
-    fetchData();
-  }, [])
+  const {data, isLoading, error} = useQuery({
+    queryKey: ['dashboardData', role],
+    queryFn: fetchData,
+  })
+
+
+  if(isLoading) {
+    return (
+      <div className="flex flex-col gap-8 justify-center items-center bg-gray-800 w-lvw h-lvh">
+        <h1 className="text-6xl text-white">Dashboard</h1>
+        <p className="text-xl text-white">Welcome, {role}!</p>
+        <p className="text-white">Loading data...</p>
+      </div>
+    )
+  }
+
+  if(error) {
+    return (
+      <div className="flex flex-col gap-8 justify-center items-center bg-gray-800 w-lvw h-lvh">
+        <h1 className="text-6xl text-white">Dashboard</h1>
+        <p className="text-xl text-white">Welcome, {role}!</p>
+        <p className="text-white">Error loading data.</p>
+      </div>
+    )
+  }
+ 
 
   return (
     <div className="flex flex-col gap-8 justify-center items-center bg-gray-800 w-lvw h-lvh">
       <h1 className="text-6xl text-white">Dashboard</h1>
       <p className="text-xl text-white">Welcome, {role}!</p>
 
-      {data ? (
-        <div>
-          <h2 className="text-xl text-white">Data:</h2>
-          <p className="text-white">{data.message}</p>
-          <p className="text-white">{data.userCount ? `User Count: ${data.userCount}` : null}</p>
-        </div>
-      ) : (
-        <p className="text-white">Loading data...</p>
-      )}
+      {data && role === "USER" && <UserCard data={data} />}
+      {data && role === "ADMIN" && <AdminCard data={data} />}
 
-        <a href="/logout" className="text-white">
-          <button className="p-4 bg-red-600 rounded-2xl">
-            logout
-          </button>
-        </a>
+
+      <a href="/logout" className="text-white">
+        <button className="p-4 bg-red-600 rounded-2xl">
+          logout
+        </button>
+      </a>
 
     </div>
   )
