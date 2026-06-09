@@ -8,6 +8,7 @@ import dev.mukesh.AssignmentBotmakers.mapper.AuthMapper;
 import dev.mukesh.AssignmentBotmakers.repository.UserRepo;
 import dev.mukesh.AssignmentBotmakers.security.JwtService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,6 +32,10 @@ public class UserService {
     private final AuthMapper authMapper;
 
     public AuthResponse register(RegisterRequest request) {
+
+        if(userRepo.existsByEmail(request.email())) {
+            throw new DataIntegrityViolationException("email already exists");
+        }
 
         User user = authMapper.toUser(request);
 
