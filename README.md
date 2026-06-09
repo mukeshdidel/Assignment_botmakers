@@ -21,5 +21,5 @@ a full stack web app with jwt and role based access
 1. clone the repo and navigate to root directory.
 2. run 
 
-'''bash
+```bash
 docker compose up --build
