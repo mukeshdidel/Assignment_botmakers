@@ -23,3 +23,15 @@ services:
       - SPRING_DATASOURCE_PASSWORD=postgres
     depends_on:
       - postgres
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: dockerfile
+    container_name: assignment_botmaker_frontend
+    ports:
+     - "5173:5173"
+    depends_on:
+      - backend
+    environment:
+      - VITE_BACKEND_URL=http://localhost:8080/api
