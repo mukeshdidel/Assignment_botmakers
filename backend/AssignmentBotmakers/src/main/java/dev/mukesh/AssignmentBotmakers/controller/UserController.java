@@ -5,6 +5,7 @@ import dev.mukesh.AssignmentBotmakers.dto.request.LoginRequest;
 import dev.mukesh.AssignmentBotmakers.dto.request.RegisterRequest;
 import dev.mukesh.AssignmentBotmakers.dto.response.AdminDataResponse;
 import dev.mukesh.AssignmentBotmakers.dto.response.AuthResponse;
+import dev.mukesh.AssignmentBotmakers.dto.response.StatusResponse;
 import dev.mukesh.AssignmentBotmakers.dto.response.UserDataResponse;
 import dev.mukesh.AssignmentBotmakers.service.UserService;
 import jakarta.validation.Valid;
@@ -37,8 +38,9 @@ public class UserController {
     }
 
     @GetMapping("/public/status")
-    String status() {
-        return "the application is running";
+    ResponseEntity<StatusResponse> status() {
+        StatusResponse response = new StatusResponse("the application is running");
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 

@@ -19,6 +19,7 @@ const Login = () => {
     try{
         const res = await loginUser(data);
         localStorage.setItem("token", res.token);
+        localStorage.setItem("role", res.role);
         console.log("Login successful", res);
         navigate("/dashboard");
     }catch(err){
@@ -51,6 +52,8 @@ const Login = () => {
             <button type="submit" disabled={isSubmitting} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
               {isSubmitting ? "Logging in..." : "Login"}
             </button>
+            
+            <a href="/register" className="text-blue-500 hover:text-blue-700">Sign up</a>
 
           </form>
         </div>
