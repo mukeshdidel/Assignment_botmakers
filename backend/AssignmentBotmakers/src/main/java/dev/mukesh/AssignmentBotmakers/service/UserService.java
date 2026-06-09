@@ -1,11 +1,17 @@
 package dev.mukesh.AssignmentBotmakers.service;
 
+import dev.mukesh.AssignmentBotmakers.dto.request.LoginRequest;
 import dev.mukesh.AssignmentBotmakers.dto.request.RegisterRequest;
 import dev.mukesh.AssignmentBotmakers.dto.response.AuthResponse;
 import dev.mukesh.AssignmentBotmakers.entity.User;
 import dev.mukesh.AssignmentBotmakers.mapper.AuthMapper;
 import dev.mukesh.AssignmentBotmakers.repository.UserRepo;
+import dev.mukesh.AssignmentBotmakers.security.JwtService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +21,8 @@ public class UserService {
 
     //service
     public final PasswordEncoder passwordEncoder;
+    public final AuthenticationManager authenticationManager;
+    public final JwtService jwtService;
 
     // repo
     public final UserRepo userRepo;
@@ -30,8 +38,23 @@ public class UserService {
 
         userRepo.save(user);
 
-        return authMapper.toAuthResponse(user);
+        return authMapper.toAuthResponse(user, jwtService.generateJwtToken(user));
 
+
+    }
+
+    public AuthResponse login(LoginRequest loginRequest) {
+
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.password()));
+
+        if(!authentication.isAuthenticated() || authentication.getPrincipal() == null) {
+            throw new BadCredentialsException("invalid username or password");
+        }
+
+        User user = (User) authentication.getPrincipal();
+
+
+        return authMapper.toAuthResponse(user, jwtService.generateJwtToken(user));
 
     }
 

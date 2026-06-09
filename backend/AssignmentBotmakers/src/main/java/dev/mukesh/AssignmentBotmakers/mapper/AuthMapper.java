@@ -14,5 +14,6 @@ public interface AuthMapper {
     @Mapping(target = "id", ignore = true)
     User toUser(RegisterRequest request);
 
-    AuthResponse toAuthResponse(User user);
+    @Mapping(target = "token", source = "token")
+    AuthResponse toAuthResponse(User user, String token);
 }
