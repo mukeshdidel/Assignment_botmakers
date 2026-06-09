@@ -1,7 +1,10 @@
+import AppRouter from "./routes/AppRouter"
 
 const App = () => {
   return (
-    <div className="bg-gray-500">App</div>
+    <div>
+      <AppRouter />
+    </div>
   )
 }
 
